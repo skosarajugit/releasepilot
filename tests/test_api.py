@@ -141,7 +141,7 @@ def test_create_blocker():
     }).json()
 
     # Create a blocker
-    response = client.post(f"/blockers/release/{release['id']}", json={
+    response = client.post(f"/blockers/release/{release['id']}/", json={
         "title": "Test blocker",
         "severity": "high",
         "assigned_to": "Test Engineer"
@@ -156,10 +156,10 @@ def test_resolve_blocker():
     """Resolving a blocker changes its status"""
     # Create release + blocker
     release = client.post("/releases/", json={"name": "R", "version": "v1", "owner": "O"}).json()
-    blocker = client.post(f"/blockers/release/{release['id']}", json={"title": "Block", "severity": "low"}).json()
+    blocker = client.post(f"/blockers/release/{release['id']}/", json={"title": "Block", "severity": "low"}).json()
 
     # Resolve it
-    response = client.post(f"/blockers/{blocker['id']}/resolve")
+    response = client.post(f"/blockers/{blocker['id']}/resolve/")
     assert response.status_code == 200
     assert response.json()["status"] == "resolved"
     assert response.json()["resolved_at"] is not None
