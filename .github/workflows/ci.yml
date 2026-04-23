@@ -65,6 +65,7 @@ jobs:
           DATABASE_URL: sqlite:///./test.db
           OLLAMA_BASE_URL: http://localhost:11434
           OLLAMA_MODEL: tinyllama
+          PYTHONPATH: .
         run: |
           pytest tests/ -v --tb=short
         # If tests/ folder is empty, this step is skipped gracefully
