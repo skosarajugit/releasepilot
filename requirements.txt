@@ -1,0 +1,31 @@
+# ── Web framework ──────────────────────────────────────────
+fastapi==0.111.0          # API framework
+uvicorn==0.29.0           # ASGI server that runs FastAPI
+
+# ── Database ────────────────────────────────────────────────
+sqlalchemy==2.0.30        # ORM - lets us write Python instead of raw SQL
+alembic==1.13.1           # Database migrations (schema version control)
+
+# ── Data validation ─────────────────────────────────────────
+pydantic==2.7.1           # Data models & validation (FastAPI uses this built-in)
+pydantic-settings==2.2.1  # Loads settings from .env file
+
+# ── Dashboard ───────────────────────────────────────────────
+streamlit==1.35.0         # Dashboard UI framework
+plotly==5.22.0            # Interactive charts
+pandas==2.2.2             # Data analysis and DORA metrics
+altair==5.3.0             # Alternative charting library
+
+# ── HTTP client ─────────────────────────────────────────────
+httpx==0.27.0             # Async HTTP client (calls Ollama, Slack, GitHub)
+
+# ── AI (Ollama - free, local) ───────────────────────────────
+ollama==0.2.1             # Official Ollama Python client
+
+# ── Utilities ───────────────────────────────────────────────
+python-dotenv==1.0.1      # Loads .env files
+faker==25.0.0             # Generates realistic fake data for seeding
+rich==13.7.1              # Pretty terminal output for scripts
+pytest==8.2.0             # Testing framework
+pytest-asyncio==0.23.7    # Async test support
+httpx==0.27.0             # Also used for test client

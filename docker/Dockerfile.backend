@@ -1,0 +1,62 @@
+# docker/Dockerfile.backend
+#
+# This file tells Docker how to build a container for the FastAPI backend.
+#
+# How Docker works (simple explanation):
+#   Think of it like a recipe for a self-contained computer.
+#   Each line adds a layer — base OS, Python, your code, dependencies.
+#   The result is an "image" you can run anywhere: your laptop, a server, AWS.
+#
+# Build this image with:
+#   docker build -f docker/Dockerfile.backend -t releasepilot-backend .
+#
+# Run it with:
+#   docker run -p 8000:8000 releasepilot-backend
+# (But docker-compose.yml does all this for you automatically)
+
+# ── Base image ────────────────────────────────────────────────────────────────
+# python:3.11-slim = Python 3.11 on minimal Debian Linux (~50MB vs ~900MB full)
+# "slim" removes unnecessary tools — keeps the container small and secure
+FROM python:3.11-slim
+
+# ── Set working directory ─────────────────────────────────────────────────────
+# All subsequent commands run from /app inside the container
+# This is like doing `cd /app` at the start of every RUN command
+WORKDIR /app
+
+# ── Install system dependencies ───────────────────────────────────────────────
+# Some Python packages need C compilers or system libraries to build.
+# We install them first, then clean up to keep the image small.
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── Copy and install Python dependencies ──────────────────────────────────────
+# We copy requirements.txt BEFORE the rest of the code.
+# Why? Docker caches each layer. If requirements.txt hasn't changed,
+# Docker skips the slow pip install step on rebuilds.
+# This makes rebuilds much faster when you only change Python files.
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# ── Copy application code ─────────────────────────────────────────────────────
+# Copy the backend package into the container
+COPY backend/ ./backend/
+
+# ── Environment variables ─────────────────────────────────────────────────────
+# These are defaults — docker-compose.yml can override them
+ENV DATABASE_URL=sqlite:///./releasepilot.db
+ENV OLLAMA_BASE_URL=http://ollama:11434
+ENV OLLAMA_MODEL=tinyllama
+ENV APP_ENV=production
+
+# ── Expose port ───────────────────────────────────────────────────────────────
+# Tell Docker this container listens on port 8000
+# This doesn't actually open the port — docker-compose.yml does that
+EXPOSE 8000
+
+# ── Startup command ───────────────────────────────────────────────────────────
+# This runs when the container starts.
+# --host 0.0.0.0 = accept connections from outside the container (not just localhost)
+# --workers 2    = run 2 worker processes (handles concurrent requests better)
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]

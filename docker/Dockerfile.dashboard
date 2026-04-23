@@ -1,0 +1,39 @@
+# docker/Dockerfile.dashboard
+#
+# Container for the Streamlit dashboard.
+# Same pattern as the backend — copy code, install deps, run.
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y gcc && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the dashboard package
+COPY dashboard/ ./dashboard/
+
+# Streamlit config — disable the "want to sign up" prompt and set server options
+# We write this as a config file that Streamlit reads on startup
+RUN mkdir -p /root/.streamlit
+RUN echo '\
+[general]\n\
+email = ""\n\
+\n\
+[server]\n\
+headless = true\n\
+enableCORS = false\n\
+port = 8501\n\
+\n\
+[browser]\n\
+gatherUsageStats = false\n\
+' > /root/.streamlit/config.toml
+
+ENV BACKEND_URL=http://backend:8000
+
+EXPOSE 8501
+
+# Streamlit requires a script path, not a module path
+CMD ["streamlit", "run", "dashboard/app.py", "--server.address", "0.0.0.0"]

@@ -1,0 +1,84 @@
+# docker/docker-compose.yml
+#
+# Docker Compose defines all the services (containers) that make up the app
+# and how they connect to each other.
+#
+# Services defined here:
+#   backend   → FastAPI on port 8000
+#   dashboard → Streamlit on port 8501
+#   ollama    → Local AI model server on port 11434
+#
+# To start everything:
+#   docker compose -f docker/docker-compose.yml up --build
+#
+# To stop:
+#   docker compose -f docker/docker-compose.yml down
+#
+# To view logs:
+#   docker compose -f docker/docker-compose.yml logs -f
+
+
+services:
+
+  # ── FastAPI Backend ─────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ..                          # Build from the releasepilot/ root
+      dockerfile: docker/Dockerfile.backend
+    container_name: releasepilot-backend
+    ports:
+      - "8000:8000"                        # host:container — access at localhost:8000
+    environment:
+      - DATABASE_URL=sqlite:////tmp/releasepilot.db
+      - OLLAMA_BASE_URL=http://ollama:11434  # "ollama" = service name below, Docker resolves it
+      - OLLAMA_MODEL=tinyllama
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}  # Read from .env if set, empty otherwise
+    volumes:
+      # Mount a volume for the SQLite database file
+      # Without this, the DB is lost every time the container restarts
+      - db_data:/tmp
+    depends_on:
+      - ollama                             # Start ollama before backend
+    restart: unless-stopped               # Restart if it crashes, but not if manually stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ── Streamlit Dashboard ─────────────────────────────────────────────────────
+  dashboard:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.dashboard
+    container_name: releasepilot-dashboard
+    ports:
+      - "8501:8501"                        # Access at localhost:8501
+    environment:
+      - BACKEND_URL=http://backend:8000    # Calls backend by service name, not localhost
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # ── Ollama (local AI) ───────────────────────────────────────────────────────
+  # Ollama runs the TinyLlama model locally inside Docker.
+  # On first run it will download the model (~600MB) — this takes a few minutes.
+  ollama:
+    image: ollama/ollama:latest            # Official Ollama Docker image
+    container_name: releasepilot-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      # Persist downloaded models so you don't re-download on every restart
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    # Pull the model on startup if not already downloaded
+    # The entrypoint runs ollama serve, then pulls the model in the background
+    entrypoint: ["/bin/sh", "-c", "ollama serve & sleep 5 && ollama pull tinyllama && wait"]
+
+# ── Named volumes ─────────────────────────────────────────────────────────────
+# Volumes persist data between container restarts.
+# Docker manages these — you don't need to create them manually.
+volumes:
+  db_data:       # SQLite database file
+  ollama_data:   # Downloaded AI models

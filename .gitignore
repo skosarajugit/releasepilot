@@ -1,0 +1,38 @@
+# ── Python ────────────────────────────────────────────────────
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Environment variables (NEVER commit secrets!) ─────────────
+.env
+
+# ── Database files ────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ── Test artifacts ────────────────────────────────────────────
+test_releasepilot.db
+.pytest_cache/
+htmlcov/
+.coverage
+
+# ── Streamlit ─────────────────────────────────────────────────
+.streamlit/
+
+# ── OS files ──────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE files ─────────────────────────────────────────────────
+.vscode/
+.idea/
+*.iml
