@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     # ── GitHub ────────────────────────────────────────────────
     # Optional — if blank, mock data is used instead
     GITHUB_TOKEN: str = ""
-    GITHUB_REPO: str = "skosarajugit/project-mediwatch"
+    GITHUB_REPO: str = "skosarajugit/releasepilot"
 
     # ── App ───────────────────────────────────────────────────
     APP_NAME: str = "ReleasePilot"
