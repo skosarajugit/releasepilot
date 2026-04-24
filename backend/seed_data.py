@@ -5,7 +5,7 @@
 #   python -m backend.seed_data
 #
 # It uses the Faker library to generate realistic names, dates, and text.
-# All data is Clover POS themed — the company we're targeting.
+
 
 from datetime import datetime, timedelta
 import random
@@ -114,7 +114,7 @@ def make_commit_message():
 
 def make_jira_ticket():
     """Generate a fake Jira ticket number"""
-    return f"CLOVER-{random.randint(4500, 5000)}"
+    return f"PROJ-{random.randint(4500, 5000)}"
 
 
 # ── Seed functions ────────────────────────────────────────────────────────────
@@ -139,7 +139,7 @@ def seed_releases(db) -> list[Release]:
             status=status,
             target_date=target,
             deployed_at=deployed_at,
-            description=f"{name} release {version} — automated via ReleasePilot",
+            description=f"{name} release {version} — automated via ReleasePilot AI",
         )
         db.add(release)
         releases.append(release)

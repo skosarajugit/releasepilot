@@ -74,7 +74,7 @@ async def call_ollama(prompt: str, system: str = None) -> str:
 # ── System prompt ─────────────────────────────────────────────────────────────
 # This tells the AI what role to play. Every function below uses this.
 SYSTEM_PROMPT = """You are ReleasePilot, an expert AI Release Manager assistant 
-for Clover, a fintech Point-of-Sale company. You help with:
+for a fintech Point-of-Sale company. You help with:
 - Writing clear, professional release documentation
 - Triaging release blockers and suggesting fixes
 - Analyzing DORA metrics and recommending improvements

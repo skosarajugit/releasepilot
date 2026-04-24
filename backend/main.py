@@ -6,7 +6,7 @@ from backend.routers import releases, blockers, pipeline, ai, metrics, notificat
 
 app = FastAPI(
     title="ReleasePilot API",
-    description="AI-powered Release Manager backend for Clover POS",
+    description="AI-powered Release Manager backend for a fintech POS",
     version="1.0.0",
 )
 
