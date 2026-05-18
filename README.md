@@ -4,6 +4,10 @@ An AI-powered Release Manager dashboard built with Python.
 Designed as a portfolio project for DevOps/Release Manager roles.
 
 ---
+Architecture Diagram -
+<p align="center">
+  <img src="./architecture.png" alt="ReleasePilot Architecture" width="800"/>
+</p>
 
 ## What You'll Learn Building This
 
