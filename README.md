@@ -9,6 +9,17 @@ Architecture Diagram -
   <img src="./architecture.png" alt="ReleasePilot Architecture" width="800"/>
 </p>
 
+## Dashboard Screenshots
+
+<p align="center">
+  <img src="docs/screenshots/dashboard.png" 
+       alt="ReleasePilot Dashboard" 
+       width="900"/>
+</p>
+
+### DORA Metrics
+![DORA Metrics](docs/screenshots/dora-metrics.png)
+
 ## What You'll Learn Building This
 
 - **FastAPI** — building REST APIs in Python
